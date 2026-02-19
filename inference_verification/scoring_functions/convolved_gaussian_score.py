@@ -1,14 +1,3 @@
-"""
-Convolved Gaussian Score (CGS) implementation.
-
-This module implements the Circuit Genuineness Score (CGS) method, which verifies
-tokens by computing the probability that a Gaussian-perturbed uniform random value
-would fall into each token's CDF interval.
-
-The key idea: Sample u ~ Uniform[0,1] deterministically from seed + past tokens,
-then compute P(token_i is sampled | u ~ N(u_obs, sigma^2)) for each token.
-"""
-
 import torch
 import xxhash
 
