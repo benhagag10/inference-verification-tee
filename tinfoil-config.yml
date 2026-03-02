@@ -1,0 +1,24 @@
+# Tinfoil Containers deployment configuration
+# Docs: https://docs.tinfoil.sh
+#
+# TODO: Update shim-version and cvm-version to match your Tinfoil subscription.
+# Get the latest values from Tinfoil support or the dashboard.
+
+shim-version: v0.3.18
+cvm-version: 0.6.7
+cpus: 8
+memory: 16384
+
+containers:
+  - name: "inference-verifier"
+    image: "ghcr.io/benhagag10/inference-verification-tee:latest"
+    secrets:
+      - HF_TOKEN
+
+shim:
+  listen-port: 443
+  upstream-port: 8080
+  paths:
+    - /verify
+    - /health
+    - /config

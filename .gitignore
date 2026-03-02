@@ -1,2 +1,12 @@
-__pycache__
-
+__pycache__/
+*.pyc
+*.pyo
+*.pkl
+.env
+.env.*
+generated_outputs/
+gumbel_cgs_analysis_results/
+.claude/
+*.egg-info/
+dist/
+build/
