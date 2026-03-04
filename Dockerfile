@@ -12,7 +12,7 @@ RUN pip3 install --no-cache-dir -r requirements.txt
 COPY . /app
 WORKDIR /app
 
-RUN pip3 install --no-cache-dir -e .
+RUN pip3 install --no-cache-dir .
 
 EXPOSE 8080
 
