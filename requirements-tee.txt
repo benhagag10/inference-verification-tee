@@ -1,0 +1,32 @@
+# =============================================================================
+# TEE Runtime Dependencies (slim)
+# =============================================================================
+# This file contains ONLY the packages needed to run api_server.py inside
+# the Tinfoil TEE container. Dev/analysis deps (wandb, matplotlib, pandas,
+# pytest, etc.) are intentionally excluded to minimize image size.
+#
+# See requirements.txt for the full dev dependency list.
+# See changes.md for the rationale behind each removal.
+# =============================================================================
+
+# --- Core inference engine ---
+# vLLM handles LLM inference with Gumbel-max sampling.
+# It bundles its own torch build, so we don't pin torch separately.
+vllm>=0.10.0
+
+# --- Model loading & tokenization ---
+transformers==4.53.2
+huggingface-hub>=0.33.1
+hf-transfer>=0.1.9          # fast model downloads via HF_HUB_ENABLE_HF_TRANSFER=1
+
+# --- API server ---
+fastapi>=0.115.0
+uvicorn>=0.32.0
+pydantic                     # request/response models (also a fastapi dep)
+
+# --- Used in generate.py / verify.py / scoring_functions ---
+datasets>=3.1.0              # load_dataset("lmsys/lmsys-chat-1m") for prompts
+tqdm                         # progress bars during generation/verification
+pyyaml                       # yaml.load in generate.py and verify.py
+xxhash                       # seed hashing in scoring_functions
+numpy                        # used in verify.py
