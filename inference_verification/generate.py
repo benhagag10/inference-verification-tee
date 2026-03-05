@@ -73,16 +73,18 @@ class GenerationConfig:
 def load_prompts(cfg: GenerationConfig) -> list[list[int]]:
     """Load and tokenize prompts from dataset."""
     tokenizer = AutoTokenizer.from_pretrained(cfg.model_name)
-    ds = load_dataset(cfg.dataset_name, split="train")
+    # Use streaming to avoid downloading the full dataset to disk (critical in TEE ramdisk environments)
+    ds = load_dataset(cfg.dataset_name, split="train", streaming=True)
 
     tokenized_prompts = []
     unique_prompts = set()
 
-    count = 0
     pbar = tqdm(total=cfg.n_prompts, desc="Loading prompts")
-    while len(tokenized_prompts) < cfg.n_prompts and count < len(ds):
+    for row in ds:
+        if len(tokenized_prompts) >= cfg.n_prompts:
+            break
         try:
-            raw_prompt = ds[count]["conversation"]
+            raw_prompt = row["conversation"]
             rendered_prompt = tokenizer.apply_chat_template(raw_prompt, tokenize=False, add_generation_prompt=True)
             tokenized_prompt = tokenizer.encode(rendered_prompt, add_special_tokens=False, return_tensors=None)
 
@@ -92,9 +94,7 @@ def load_prompts(cfg: GenerationConfig) -> list[list[int]]:
                     tokenized_prompts.append(tokenized_prompt)
                     pbar.update(1)
         except Exception as e:
-            print(f"Warning: Failed to process prompt {count}: {e}")
-
-        count += 1
+            print(f"Warning: Failed to process prompt: {e}")
 
     pbar.close()
     del tokenizer
