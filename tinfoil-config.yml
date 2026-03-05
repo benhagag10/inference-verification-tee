@@ -5,7 +5,7 @@ memory: 32768
 
 containers:
   - name: "inference-verifier"
-    image: "ghcr.io/benhagag10/inference-verification-tee:v0.6.0"
+    image: "ghcr.io/benhagag10/inference-verification-tee:v0.6.0@sha256:887ff5fbb482985ffe76c76645046d0d9bed2ca630fd37e7e4744c1bf64f37d3"
     runtime: nvidia
     gpus: all
     secrets:
