@@ -1,5 +1,33 @@
 # Changes Log
 
+## 2026-03-05: Bundle prompts locally instead of downloading dataset at runtime
+
+### Problem
+The `/verify` endpoint downloaded the full `lmsys/lmsys-chat-1m` dataset from
+Hugging Face just to pick a few prompts. This failed in the TEE because:
+- The ramdisk had no room for the dataset cache ("no space left on device")
+- Outbound HTTP to HF for prompts is an unnecessary attack surface
+- Slow and unreliable at runtime
+
+### What changed
+
+**Bundled 10k prompts locally:**
+- New script `scripts/extract_prompts.py` randomly samples 10k conversations
+  (fitting within 512 tokens) from `lmsys/lmsys-chat-1m` and saves them to
+  `inference_verification/data/prompts.json`
+- This file is baked into the Docker image via `COPY . /app`
+
+**`inference_verification/generate.py` — `load_prompts()`:**
+- Reads from local `data/prompts.json` instead of calling `load_dataset()`
+- Same tokenization + filtering logic, just no network access needed
+
+**`requirements-tee.txt`:**
+- Removed `datasets>=3.1.0` (no longer needed at runtime)
+- Shrinks image and removes `pyarrow`, `fsspec`, etc. transitive deps
+
+**`tinfoil-config.yml`:**
+- Bumped image tag to `v0.7.0` (digest to be pinned after build)
+
 ## 2026-03-04: Slim TEE Docker image (Dockerfile.tee + requirements-tee.txt)
 
 ### Problem

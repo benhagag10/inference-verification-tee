@@ -14,11 +14,11 @@ os.environ["PYTORCH_CUDA_ALLOC_CONF"] = "expandable_segments:True"
 # Add parent directory to path
 sys.path.insert(0, str(Path(__file__).parent.parent))
 
+import json
 import torch
 import vllm
 from vllm import LLM, SamplingParams, RequestOutput
 from transformers import AutoTokenizer
-from datasets import load_dataset
 from tqdm import tqdm
 from typing import Optional
 import pickle
@@ -71,20 +71,21 @@ class GenerationConfig:
 
 
 def load_prompts(cfg: GenerationConfig) -> list[list[int]]:
-    """Load and tokenize prompts from dataset."""
+    """Load and tokenize prompts from bundled local file."""
     tokenizer = AutoTokenizer.from_pretrained(cfg.model_name)
-    # Use streaming to avoid downloading the full dataset to disk (critical in TEE ramdisk environments)
-    ds = load_dataset(cfg.dataset_name, split="train", streaming=True)
+
+    prompts_path = Path(__file__).parent / "data" / "prompts.json"
+    with open(prompts_path) as f:
+        conversations = json.load(f)
 
     tokenized_prompts = []
     unique_prompts = set()
 
     pbar = tqdm(total=cfg.n_prompts, desc="Loading prompts")
-    for row in ds:
+    for raw_prompt in conversations:
         if len(tokenized_prompts) >= cfg.n_prompts:
             break
         try:
-            raw_prompt = row["conversation"]
             rendered_prompt = tokenizer.apply_chat_template(raw_prompt, tokenize=False, add_generation_prompt=True)
             tokenized_prompt = tokenizer.encode(rendered_prompt, add_special_tokens=False, return_tensors=None)
 
