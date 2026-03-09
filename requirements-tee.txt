@@ -25,6 +25,7 @@ uvicorn>=0.32.0
 pydantic                     # request/response models (also a fastapi dep)
 
 # --- Used in generate.py / verify.py / scoring_functions ---
+accelerate                   # required for device_map="auto" in verify.py
 tqdm                         # progress bars during generation/verification
 pyyaml                       # yaml.load in generate.py and verify.py
 xxhash                       # seed hashing in scoring_functions
