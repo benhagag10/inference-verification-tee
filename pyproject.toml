@@ -74,5 +74,10 @@ docstring-code-format = true
 [tool.ruff.isort]
 known-third-party = ["wandb"]
 
+[tool.pytest.ini_options]
+markers = [
+    "slow: tests that call /verify (slow, requires GPU)",
+]
+
 [tool.pyright]
 include = ["inference_verification", "tests"]

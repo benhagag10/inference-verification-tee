@@ -18,3 +18,4 @@ shim:
     - /verify
     - /health
     - /config
+    - /ui

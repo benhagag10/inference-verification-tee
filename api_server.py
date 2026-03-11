@@ -16,8 +16,11 @@ sys.path.insert(0, str(Path(__file__).parent))
 import torch
 import uvicorn
 from fastapi import FastAPI, HTTPException
+from fastapi.responses import HTMLResponse
 from pydantic import BaseModel, Field
 from typing import Optional
+
+from ui import get_ui_html
 
 from inference_verification.generate import (
     GenerationConfig,
@@ -76,6 +79,11 @@ DEFAULT_LOGIT_RANK_THRESHOLD = 10
 
 
 # --- Endpoints ---
+
+@app.get("/ui", response_class=HTMLResponse)
+def ui_page():
+    return get_ui_html()
+
 
 @app.get("/health")
 def health():
