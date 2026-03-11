@@ -224,7 +224,7 @@ function renderResults(data) {
   ].map(s => `<div class="stat ${s.cls}"><div class="count">${s.count}</div><div class="pct">${s.pct}%</div><div class="stat-label">${s.cls}</div></div>`).join('');
 
   document.getElementById('tokens-body').innerHTML = data.tokens.map((t, i) =>
-    `<tr><td>${i + 1}</td><td>${t.gls_score.toFixed(4)}</td><td>${t.logit_rank}</td><td><span class="badge ${t.classification}">${t.classification}</span></td></tr>`
+    `<tr><td>${i + 1}</td><td>${t.gls_score != null ? t.gls_score.toFixed(4) : 'N/A'}</td><td>${t.logit_rank}</td><td><span class="badge ${t.classification}">${t.classification}</span></td></tr>`
   ).join('');
 
   document.getElementById('results').classList.add('show');
